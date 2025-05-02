@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fraud Shield - Advanced Detection Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #3a0ca3;
+      --primary-light: #4361ee;
+      --secondary: #7209b7;
+      --accent: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #4cc9f0;
+      --danger: #e63946;
+      --warning: #ffb703;
+      --gradient-bg: linear-gradient(135deg, #4361ee, #3a0ca3, #7209b7);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Roboto', sans-serif;
+    }
+
+    body {
+      background-color: #f0f2f5;
+      background-image: 
+        radial-gradient(at 10% 10%, rgba(67, 97, 238, 0.1) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(114, 9, 183, 0.1) 0px, transparent 50%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: var(--dark);
+    }
+
+    .page-container {
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .logo-container {
+      margin-bottom: 1rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      background: var(--gradient-bg);
+      color: white;
+      width: 70px;
+      height: 70px;
+      border-radius: 18px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-md);
+    }
+
+    .pulse {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 18px;
+      background: var(--gradient-bg);
+      opacity: 0.6;
+      z-index: -1;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.6;
+      }
+      70% {
+        transform: scale(1.1);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1.1);
+        opacity: 0;
+      }
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: var(--gradient-bg);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      color: #6c757d;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .cards-container {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      flex: 1;
+      min-width: 300px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-top: 4px solid transparent;
+    }
+
+    .report-card {
+      border-color: var(--accent);
+    }
+
+    .check-card {
+      border-color: var(--success);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+    }
+
+    .report-icon {
+      background: linear-gradient(135deg, #f72585, #b5179e);
+      color: white;
+    }
+
+    .check-icon {
+      background: linear-gradient(135deg, #4cc9f0, #4895ef);
+      color: white;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #495057;
+    }
+
+    input, textarea {
+      padding: 0.875rem 1rem;
+      border: 2px solid #e9ecef;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      color: var(--dark);
+      background-color: #f8f9fa;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      background-color: white;
+      box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .card-number-input {
+      font-family: monospace;
+      letter-spacing: 1px;
+    }
+
+    button {
+      margin-top: 0.5rem;
+      padding: 1rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .report-btn {
+      background: linear-gradient(135deg, #f72585, #b5179e);
+      color: white;
+    }
+
+    .check-btn {
+      background: linear-gradient(135deg, #4cc9f0, #4895ef);
+      color: white;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    footer {
+      margin-top: 4rem;
+      text-align: center;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    .security-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 2rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1rem;
+    }
+
+    .security-badge i {
+      color: var(--primary);
+    }
+
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      text-align: center;
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .modal-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2.5rem;
+    }
+
+    .modal-icon.success {
+      background: linear-gradient(135deg, #06d6a0, #1b9aaa);
+      color: white;
+    }
+
+    .modal-icon.error {
+      background: linear-gradient(135deg, #e63946, #d00000);
+      color: white;
+    }
+
+    .modal-icon.warning {
+      background: linear-gradient(135deg, #ffb703, #fb8500);
+      color: white;
+    }
+
+    .modal h3 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+
+    .modal p {
+      color: #6c757d;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .btn-close-modal {
+      background: linear-gradient(135deg, #4361ee, #3a0ca3);
+      color: white;
+      padding: 0.75rem 1.5rem;
+    }
+
+    .card-details {
+      background-color: #f8f9fa;
+      padding: 1rem;
+      border-radius: 10px;
+      font-family: monospace;
+      font-size: 1.2rem;
+      margin: 1rem 0;
+      color: var(--dark);
+    }
+
+    /* Transaction result message styles */
+    .result-message {
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: fadeInUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .result-safe {
+      background-color: rgba(6, 214, 160, 0.1);
+      border: 1px solid rgba(6, 214, 160, 0.5);
+      color: #06d6a0;
+    }
+
+    .result-fraud {
+      background-color: rgba(230, 57, 70, 0.1);
+      border: 1px solid rgba(230, 57, 70, 0.5);
+      color: #e63946;
+    }
+
+    .result-warning {
+      background-color: rgba(255, 183, 3, 0.1);
+      border: 1px solid rgba(255, 183, 3, 0.5);
+      color: #fb8500;
+    }
+
+    /* Animation for success message */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Loader animation */
+    .loader {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(67, 97, 238, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+      margin: 0 auto;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .cards-container {
+        flex-direction: column;
+      }
+      
+      .card {
+        width: 100%;
+      }
+      
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      .modal {
+        padding: 1.5rem;
+      }
+
+      .modal h3 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <header>
+      <div class="logo-container">
+        <div class="logo">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="pulse"></div>
+      </div>
+      <h1>Fraud Shield</h1>
+      <p class="subtitle">Advanced fraud detection portal with real-time transaction monitoring and secure card protection</p>
+      <div class="security-badge">
+        <i class="fas fa-lock"></i>
+        <span>256-bit Secure Connection</span>
+      </div>
+    </header>
+
+    <div class="cards-container">
+      <div class="card report-card">
+        <div class="card-header">
+          <div class="card-icon report-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h2>Report Stolen Card</h2>
+        </div>
+        <form id="report-form" action="/report_stolen" method="POST">
+          <div class="form-group">
+            <label for="card-number">Card Number</label>
+            <input type="text" id="card-number" name="card_number" class="card-number-input" placeholder="XXXX XXXX XXXX XXXX" required>
+          </div>
+          <button type="submit" class="report-btn">
+            <i class="fas fa-ban"></i>
+            Report as Stolen
+          </button>
+          <div class="loader" id="report-loader"></div>
+        </form>
+      </div>
+
+      <div class="card check-card">
+        <div class="card-header">
+          <div class="card-icon check-icon">
+            <i class="fas fa-search-dollar"></i>
+          </div>
+          <h2>Verify Transaction</h2>
+        </div>
+        <form id="check-form" action="/check_transaction" method="POST">
+          <div class="form-group">
+            <label for="check-card-number">Card Number</label>
+            <input type="text" id="check-card-number" name="card_number" class="card-number-input" placeholder="XXXX XXXX XXXX XXXX" required>
+          </div>
+          <div class="form-group">
+            <label for="transaction-data">Transaction Data (JSON format)</label>
+            <textarea id="transaction-data" name="transaction_data" placeholder='{"amount": 299.99, "merchant": "Example Store", "timestamp": "2025-04-22T14:30:00Z", "location": "New York, NY"}' required></textarea>
+          </div>
+          <button type="submit" class="check-btn">
+            <i class="fas fa-shield-alt"></i>
+            Analyze Transaction
+          </button>
+          <div class="loader" id="check-loader"></div>
+          <div id="transaction-result"></div>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2025 Fraud Shield | Advanced Security Solutions</p>
+    </footer>
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal">
+      <div class="modal-icon success">
+        <i class="fas fa-check"></i>
+      </div>
+      <h3>Card Successfully Reported</h3>
+      <p>Your card has been flagged as stolen in our system. Any attempted transactions will be blocked.</p>
+      <div class="card-details" id="reported-card-number"></div>
+      <p>If you need further assistance, please contact our support team.</p>
+      <div class="modal-actions">
+        <button class="btn-close-modal" onclick="closeModal('success-modal')">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <div class="modal-overlay" id="error-modal">
+    <div class="modal">
+      <div class="modal-icon error">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      <h3>An Error Occurred</h3>
+      <p id="error-message">We couldn't process your request. Please try again later.</p>
+      <div class="modal-actions">
+        <button class="btn-close-modal" onclick="closeModal('error-modal')">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Format card number inputs with spaces
+    document.querySelectorAll('.card-number-input').forEach(input => {
+      input.addEventListener('input', function(e) {
+        // Remove non-digits
+        let value = this.value.replace(/\D/g, '');
+        
+        // Add spaces every 4 digits
+        if (value.length > 0) {
+          value = value.match(new RegExp('.{1,4}', 'g')).join(' ');
+        }
+        
+        // Update input value
+        this.value = value;
+      });
+    });
+
+    // Show modal function
+    function showModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    // Close modal function
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Handle report stolen card form submission
+    document.getElementById('report-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const cardNumber = document.getElementById('card-number').value;
+      const formData = new FormData();
+      formData.append('card_number', cardNumber);
+      
+      // Show loader
+      document.getElementById('report-loader').style.display = 'block';
+      
+      // Send AJAX request
+      fetch('/report_stolen', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        document.getElementById('report-loader').style.display = 'none';
+        
+        if (response.ok) {
+          // Display success modal
+          document.getElementById('reported-card-number').textContent = cardNumber;
+          showModal('success-modal');
+          
+          // Reset form
+          document.getElementById('report-form').reset();
+        } else {
+          throw new Error('Failed to report card');
+        }
+      })
+      .catch(error => {
+        document.getElementById('report-loader').style.display = 'none';
+        document.getElementById('error-message').textContent = error.message;
+        showModal('error-modal');
+      });
+    });
+
+    // Handle check transaction form submission
+    document.getElementById('check-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const cardNumber = document.getElementById('check-card-number').value;
+      const transactionData = document.getElementById('transaction-data').value;
+      const formData = new FormData();
+      formData.append('card_number', cardNumber);
+      formData.append('transaction_data', transactionData);
+      
+      // Show loader
+      document.getElementById('check-loader').style.display = 'block';
+      document.getElementById('transaction-result').innerHTML = '';
+      
+      // Send AJAX request
+      fetch('/check_transaction', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        document.getElementById('check-loader').style.display = 'none';
+        
+        return response.text().then(text => {
+          if (response.ok) {
+            // Transaction is safe
+            document.getElementById('transaction-result').innerHTML = `
+              <div class="result-message result-safe">
+                <i class="fas fa-check-circle"></i>
+                <span>${text}</span>
+              </div>
+            `;
+          } else if (response.status === 403) {
+            // Fraudulent transaction or stolen card
+            document.getElementById('transaction-result').innerHTML = `
+              <div class="result-message result-fraud">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>${text}</span>
+              </div>
+            `;
+          } else {
+            // Other errors
+            document.getElementById('transaction-result').innerHTML = `
+              <div class="result-message result-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>${text}</span>
+              </div>
+            `;
+          }
+        });
+      })
+      .catch(error => {
+        document.getElementById('check-loader').style.display = 'none';
+        document.getElementById('transaction-result').innerHTML = `
+          <div class="result-message result-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>An error occurred: ${error.message}</span>
+          </div>
+        `;
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+logs/
+*.log
+
+# Models and data
+*.pkl
+*.csv
+*.sqlite3
+*.db
+
+# Environment
+.env
+*.egg-info/
+fraudai-env/
+venv/
+
+# System/IDE
+.DS_Store
+.idea/
+.vscode/

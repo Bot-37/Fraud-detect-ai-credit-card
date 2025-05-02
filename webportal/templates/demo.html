@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naan Mudhalavan Shopping</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #14b8a6;
+            --dark: #111827;
+            --dark-card: #1f2937;
+            --dark-light: #374151;
+            --light: #e5e7eb;
+            --light-gray: #9ca3af;
+            --dark-gray: #4b5563;
+            --danger: #ef4444;
+            --success: #10b981;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--dark-card);
+            border-bottom: 1px solid var(--dark-light);
+            padding: 1.25rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-container {
+            width: 150px;
+            height: 100px;
+            background-color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--light);
+        }
+        
+        .tagline {
+            font-size: 0.875rem;
+            color: var(--light-gray);
+            margin-top: 0.125rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--light);
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .product-card {
+            background-color: var(--dark-card);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-image {
+            height: 200px;
+            background-color: var(--dark-light);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .product-content {
+            padding: 1.25rem;
+        }
+        
+        .product-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+        
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        .cart-container {
+            background-color: var(--dark-card);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+        }
+        
+        .cart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--dark-light);
+            color: var(--light);
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--dark-light);
+            color: var(--light);
+        }
+        
+        .cart-item-details {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            flex: 1;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-right: 1rem;
+        }
+        
+        .quantity-btn {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--dark-light);
+            color: var(--light);
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        
+        .quantity-btn:hover {
+            background-color: var(--primary);
+        }
+        
+        .quantity-value {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .cart-item-price {
+            font-weight: 500;
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+            font-size: 1.125rem;
+            color: var(--light);
+        }
+        
+        .checkout-form {
+            background-color: var(--dark-card);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 1.5rem;
+        }
+        
+        .form-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--light);
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            color: var(--light);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            background-color: var(--dark-light);
+            border: 1px solid var(--dark-gray);
+            color: var(--light);
+            border-radius: 8px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .form-control::placeholder {
+            color: var(--light-gray);
+        }
+        
+        .btn-checkout {
+            background-color: var(--success);
+            color: white;
+            font-weight: 600;
+            padding: 0.875rem;
+            font-size: 1rem;
+        }
+        
+        .btn-checkout:hover {
+            background-color: #059669;
+        }
+        
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: var(--dark-card);
+            border-radius: 16px;
+            max-width: 550px;
+            width: 90%;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        .modal-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .fraud-result {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .legitimate {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .fraudulent {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .features-container {
+            background-color: var(--dark-light);
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .features-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        .feature-item {
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--dark-gray);
+            color: var(--light);
+        }
+        
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem 1.5rem;
+            text-align: center;
+        }
+        
+        .btn-close {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-close:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin-left: 0.5rem;
+        }
+        
+        .badge-danger {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .badge-success {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .empty-cart-message {
+            color: var(--light-gray);
+            font-style: italic;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .product-image {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="brand">
+                <div class="logo-container">
+                    <img src="/data/image.png" alt="Naan Mudhalavan Logo">
+                </div>
+                <div class="brand-text">
+                    <div class="logo-text">Naan Mudhalavan Shopping</div>
+                    <p class="tagline">Smart Shopping with Fraud Protection</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title">Featured Electronics</h2>
+        <div class="product-grid" id="products">
+            <!-- Products will be loaded here dynamically -->
+        </div>
+
+        <div class="two-column">
+            <div class="cart-container">
+                <h3 class="cart-title">Your Shopping Cart</h3>
+                <div id="cart-items">
+                    <!-- Cart items will be added here -->
+                </div>
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cart-total">₹0.00</span>
+                </div>
+            </div>
+
+            <div class="checkout-form">
+                <h3 class="form-title">Payment Information</h3>
+                <div class="form-group">
+                    <label for="card-name">Cardholder Name</label>
+                    <input type="text" id="card-name" class="form-control" placeholder="Enter cardholder name">
+                </div>
+                <div class="form-group">
+                    <label for="card-number">Card Number</label>
+                    <input type="text" id="card-number" class="form-control" placeholder="1234 5678 9012 3456">
+                </div>
+                <div class="form-group">
+                    <label for="card-expiry">Expiration Date</label>
+                    <input type="text" id="card-expiry" class="form-control" placeholder="MM/YY">
+                </div>
+                <div class="form-group">
+                    <label for="card-cvv">CVV</label>
+                    <input type="text" id="card-cvv" class="form-control" placeholder="123">
+                </div>
+                <button class="btn btn-checkout btn-block" id="process-payment">Process Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="result-modal" id="result-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Transaction Analysis Result</h2>
+            </div>
+            <div class="modal-body">
+                <div id="fraud-result" class="fraud-result">
+                    <!-- Result will be shown here -->
+                </div>
+                
+                <div class="features-container">
+                    <h3 class="features-title">Transaction Features Analysis</h3>
+                    <div id="features-list">
+                        <!-- Features will be listed here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-close" id="close-modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Product data with INR prices
+        const products = [
+            { id: 1, name: "iPhone 15 Pro", price: 119900, image: "/data/Iphone 15 Pro.png" },
+            { id: 2, name: "MacBook Air M3", price: 114900, image: "/data/MacBook Air M3.png" },
+            { id: 3, name: "Sony WH-1000XM5", price: 29990, image: "/data/Sony WH-1000XM5.png" },
+            { id: 4, name: "Samsung Galaxy Watch 6", price: 24999, image: "/data/Samsung Galaxy Watch 6.png" },
+            { id: 5, name: "iPad Air", price: 59900, image: "/data/Ipad Air.png" },
+            { id: 6, name: "Canon EOS R8", price: 189900, image: "/data/Canon EOS R8.png" },
+            { id: 7, name: "OnePlus 12", price: 64999, image: "/data/OnePlus.png" },
+            { id: 8, name: "Dell XPS 13", price: 109990, image: "/data/Dell XPS.png" }
+        ];
+        // Cart data
+        let cart = [];
+        
+        // Format price in INR
+        function formatPrice(price) {
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                maximumFractionDigits: 0
+            }).format(price);
+        }
+        
+        // DOM elements
+        const productContainer = document.getElementById('products');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalElement = document.getElementById('cart-total');
+        const processPaymentBtn = document.getElementById('process-payment');
+        const resultModal = document.getElementById('result-modal');
+        const fraudResult = document.getElementById('fraud-result');
+        const featuresList = document.getElementById('features-list');
+        const closeModalBtn = document.getElementById('close-modal');
+        
+        function renderProducts() {
+    productContainer.innerHTML = '';
+    products.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        productCard.innerHTML = `
+            <div class="product-image">
+                <img src="${product.image}" alt="${product.name}">
+            </div>
+            <div class="product-content">
+                <h3 class="product-name">${product.name}</h3>
+                <div class="product-price">${formatPrice(product.price)}</div>
+                <button class="btn btn-primary btn-block" data-id="${product.id}">Add to Cart</button>
+            </div>
+        `;
+        productContainer.appendChild(productCard);
+    });
+
+    // Add event listeners to "Add to Cart" buttons
+    document.querySelectorAll('.btn-primary').forEach(button => {
+        button.addEventListener('click', () => {
+            const productId = parseInt(button.getAttribute('data-id'));
+            addToCart(productId);
+        });
+    });
+}
+
+        
+        // Add product to cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                const existingItem = cart.find(item => item.id === productId);
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({ ...product, quantity: 1 });
+                }
+                renderCart();
+            }
+        }
+        
+        // Decrease quantity or remove item from cart
+        function decreaseQuantity(productId) {
+            const itemIndex = cart.findIndex(item => item.id === productId);
+            if (itemIndex !== -1) {
+                if (cart[itemIndex].quantity > 1) {
+                    cart[itemIndex].quantity -= 1;
+                } else {
+                    cart.splice(itemIndex, 1);
+                }
+                renderCart();
+            }
+        }
+        
+        // Render cart
+        function renderCart() {
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="cart-item">
+                        <span class="empty-cart-message">Your cart is empty</span>
+                    </div>
+                `;
+                cartTotalElement.textContent = formatPrice(0);
+                return;
+            }
+            
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItemElement = document.createElement('div');
+                cartItemElement.className = 'cart-item';
+                cartItemElement.innerHTML = `
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn decrease-btn" data-id="${item.id}">-</button>
+                        <span class="quantity-value">${item.quantity}</span>
+                        <button class="quantity-btn increase-btn" data-id="${item.id}">+</button>
+                    </div>
+                    <span class="cart-item-price">${formatPrice(itemTotal)}</span>
+                `;
+                cartItemsContainer.appendChild(cartItemElement);
+            });
+            
+            // Add event listeners to quantity buttons
+            document.querySelectorAll('.decrease-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const productId = parseInt(button.getAttribute('data-id'));
+                    decreaseQuantity(productId);
+                });
+            });
+            
+            document.querySelectorAll('.increase-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const productId = parseInt(button.getAttribute('data-id'));
+                    addToCart(productId);
+                });
+            });
+            
+            cartTotalElement.textContent = formatPrice(total);
+        }
+        
+        // Process payment and detect fraud
+        function processPayment() {
+            const cardNumber = document.getElementById('card-number').value;
+            const cardName = document.getElementById('card-name').value;
+            const expiry = document.getElementById('card-expiry').value;
+            const cvv = document.getElementById('card-cvv').value;
+            
+            if (!cardNumber || !cardName || !expiry || !cvv) {
+                alert('Please fill in all payment details');
+                return;
+            }
+            
+            if (cart.length === 0) {
+                alert('Your cart is empty. Please add items before checkout.');
+                return;
+            }
+            
+            // Calculate total amount
+            const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            // Current date and time in India
+            const now = new Date();
+            const options = { 
+                timeZone: 'Asia/Kolkata',
+                hour12: true,
+                hour: 'numeric',
+                minute: 'numeric',
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            };
+            const indiaTime = now.toLocaleString('en-IN', options);
+            
+            // Transaction features that would be used for fraud detection
+            const features = {
+                amount: totalAmount,
+                time: indiaTime,
+                cardLastFour: cardNumber.slice(-4),
+                itemCount: cart.reduce((sum, item) => sum + item.quantity, 0),
+                transactionLocation: 'Chennai, India',
+                deviceType: 'Desktop Browser'
+            };
+            
+            // Using ML model to detect fraud (simulated)
+            // In a real implementation, this would call your Python model API
+            const modelResult = simulateFraudDetection(features, cardNumber, totalAmount);
+            
+            // Display result
+            if (modelResult.isFraudulent) {
+                fraudResult.className = 'fraud-result fraudulent';
+                fraudResult.innerHTML = `
+                    <strong>FRAUD DETECTED</strong><br>
+                    Risk Level: High <span class="badge badge-danger">Blocked</span><br>
+                    Probability: ${(modelResult.fraudProbability * 100).toFixed(1)}%<br>
+                    Reason: ${modelResult.fraudReason}
+                `;
+            } else {
+                fraudResult.className = 'fraud-result legitimate';
+                fraudResult.innerHTML = `
+                    <strong>LEGITIMATE TRANSACTION</strong><br>
+                    Risk Level: ${modelResult.riskLevel} <span class="badge badge-success">Approved</span><br>
+                    Fraud Probability: ${(modelResult.fraudProbability * 100).toFixed(1)}%
+                `;
+            }
+            
+            // Display features used for detection
+            featuresList.innerHTML = '';
+            
+            // Format amount in INR for display
+            const displayFeatures = {...features};
+            displayFeatures.amount = formatPrice(features.amount);
+            
+            Object.entries(displayFeatures).forEach(([key, value]) => {
+                const featureItem = document.createElement('div');
+                featureItem.className = 'feature-item';
+                
+                // Format key for display
+                const formattedKey = key.replace(/([A-Z])/g, ' $1')
+                    .replace(/^./, str => str.toUpperCase())
+                    .replace(/([a-z])([A-Z])/g, '$1 $2');
+                
+                featureItem.innerHTML = `
+                    <strong>${formattedKey}</strong>
+                    <span>${value}</span>
+                `;
+                featuresList.appendChild(featureItem);
+            });
+            
+            // Additional fraud detection features from model
+            modelResult.additionalFeatures.forEach(feature => {
+                const featureItem = document.createElement('div');
+                featureItem.className = 'feature-item';
+                featureItem.innerHTML = `
+                    <strong>${feature.name}</strong>
+                    <span>${feature.value}</span>
+                `;
+                featuresList.appendChild(featureItem);
+            });
+            
+            // Show modal
+            resultModal.style.display = 'flex';
+        }
+        
+        // Simulate Python model fraud detection
+        // In a real implementation, this would be replaced with an API call to your Python model
+        function simulateFraudDetection(features, cardNumber, amount) {
+            let isFraudulent = false;
+            let fraudProbability = 0.05;
+            let fraudReason = '';
+            let riskLevel = 'Low';
+            
+            // Simulated fraud detection logic based on patterns
+            // Your actual Python model would have more sophisticated detection
+            
+            // Rule 1: Unusual large transaction amounts
+            if (amount > 150000) {
+                fraudProbability += 0.2;
+                riskLevel = 'Medium';
+            }
+            
+            // Rule 2: Suspicious card numbers
+            // For demo purposes, detecting cards ending with 1111 as potentially fraudulent
+            if (cardNumber.endsWith('1111')) {
+                fraudProbability += 0.4;
+                fraudReason = 'Card number matches known fraud pattern';
+                riskLevel = 'High';
+            }
+            
+            // Rule 3: Multiple high-value items
+            if (features.itemCount > 3 && amount > 200000) {
+                fraudProbability += 0.25;
+                fraudReason = 'Unusual purchasing pattern detected';
+                riskLevel = 'Medium';
+            }
+            
+            // Determine if transaction is fraudulent
+            if (fraudProbability > 0.6) {
+                isFraudulent = true;
+                riskLevel = 'High';
+                if (!fraudReason) {
+                    fraudReason = 'Multiple fraud indicators detected';
+                }
+            } else if (fraudProbability > 0.3) {
+                riskLevel = 'Medium';
+            }
+            
+            // Additional features that would come from the model
+            const additionalFeatures = [
+                { name: 'Customer Trust Score', value: ((1 - fraudProbability) * 100).toFixed(0) + '/100' },
+                { name: 'Geographic Location Risk', value: isFraudulent ? 'High' : 'Low' },
+                { name: 'Device Fingerprint Match', value: isFraudulent ? 'No' : 'Yes' },
+                { name: 'Transaction Velocity', value: riskLevel === 'Medium' ? 'Above Normal' : 'Normal' },
+                { name: 'Risk Score', value: (fraudProbability * 100).toFixed(0) + '/100' }
+            ];
+            
+            return {
+                isFraudulent,
+                fraudProbability,
+                fraudReason,
+                riskLevel,
+                additionalFeatures
+            };
+        }
+        
+        // Close modal
+        function closeModal() {
+            resultModal.style.display = 'none';
+        }
+        
+        // Event listeners
+        processPaymentBtn.addEventListener('click', processPayment);
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // Initialize
+        renderProducts();
+        renderCart();
+    </script>
+</body>
+</html>
