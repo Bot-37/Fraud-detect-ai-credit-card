@@ -1,104 +1,207 @@
 # webportal/server.py
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 import os
+import json
 import joblib
 import numpy as np
 import pandas as pd
 from datetime import datetime
 import logging
 from typing import Dict, List
-from app.fraud_detector import FraudDetector  # Import your existing detector
+from app.fraud_detector import FraudDetector
 
+# Initialize Flask application
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+app.config['SESSION_TYPE'] = 'filesystem'
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("FraudPortal")
 
-# Initialize your FraudDetector
+# Configure paths
+current_dir = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(current_dir, '..', 'data')
+MODEL_DIR = os.path.join(current_dir, '..', 'model')
+
+# Initialize FraudDetector
 try:
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(current_dir, '..', 'model', 'fraud_model.pkl')
-    scaler_path = os.path.join(current_dir, '..', 'model', 'scaler.pkl')
-    
-    detector = FraudDetector(model_path=model_path, scaler_path=scaler_path)
+    detector = FraudDetector(
+        model_path=os.path.join(MODEL_DIR, 'fraud_model.pkl'),
+        scaler_path=os.path.join(MODEL_DIR, 'scaler.pkl')
+    )
     logger.info("✅ Fraud detection system initialized successfully")
 except Exception as e:
     logger.error(f"❌ Failed to initialize fraud detector: {str(e)}")
     exit(1)
 
-# Card database with enhanced details
-valid_cards: Dict[str, Dict] = {
-    # Valid cards with enhanced details
-    '4111111111111111': {
-        'name': 'John Smith',
-        'limit': 5000,
-        'issuer': 'Visa',
-        'country': 'US',
-        'expiry': '12/25'
-    },
-    '4222222222222222': {
-        'name': 'Maria Garcia',
-        'limit': 10000,
-        'issuer': 'Mastercard',
-        'country': 'ES',
-        'expiry': '03/24'
-    },
-    # Add more cards with realistic details...
-}
+# Product data (unchanged)
+PRODUCTS = [
+    {'id': 1, 'name': "iPhone 15 Pro", 'price': 119900, 'image': "Iphone 15 Pro.png"},
+    {'id': 2, 'name': "MacBook Air M3", 'price': 114900, 'image': "MacBook Air M3.png"},
+    {'id': 3, 'name': "Sony WH-1000XM5", 'price': 29990, 'image': "Sony WH-1000XM5.png"},
+    {'id': 4, 'name': "Samsung Galaxy Watch 6", 'price': 24999, 'image': "Samsung Galaxy Watch 6.png"},
+    {'id': 5, 'name': "iPad Air", 'price': 59900, 'image': "Ipad Air.png"},
+    {'id': 6, 'name': "Canon EOS R8", 'price': 189900, 'image': "Canon EOS R8.png"},
+    {'id': 7, 'name': "OnePlus 12", 'price': 64999, 'image': "OnePlus.png"},
+    {'id': 8, 'name': "Dell XPS 13", 'price': 109990, 'image': "Dell XPS.png"}
+]
 
-# Enhanced stolen card tracking
-reported_stolen_cards: Dict[str, Dict] = {
-    '4666666666666666': {
-        'reported_date': '2023-05-15',
-        'reported_by': 'Bank of America',
-        'reason': 'Lost wallet'
-    }
-}
+# Card database loading from JSON
+def load_card_data():
+    """Load and sanitize card data from JSON file"""
+    try:
+        cards_path = os.path.join(DATA_DIR, 'fake_credit_card_dataset.json')
+        with open(cards_path, 'r') as f:
+            raw_cards = json.load(f)
+        
+        valid_cards = {}
+        for card in raw_cards:
+            # Sanitize card number
+            clean_number = card['card_number'].replace(' ', '').strip()
+            
+            valid_cards[clean_number] = {
+                'name': card['name'],
+                'limit': 1000000,  # Default limit, adjust as needed
+                'issuer': card['card_type'],
+                'country': 'IN',  # Extract from address if available
+                'expiry': card['expiry_date'],
+                'cvv': card['cvv'],
+                'billing_address': card['billing_address']
+            }
+        return valid_cards
+    except Exception as e:
+        logger.error(f"❌ Failed to load card data: {str(e)}")
+        exit(1)
 
-# Suspicious activity tracking
+valid_cards = load_card_data()
+reported_stolen_cards: Dict[str, Dict] = {}
 suspected_cards: Dict[str, Dict] = {}
 
+@app.route('/data/<path:filename>')
+def serve_data(filename):
+    """Serve files from the data directory"""
+    return send_from_directory(DATA_DIR, filename)
+
 def log_transaction(card_number: str, amount: float, status: str, reason: str):
-    """Log transaction details for audit purposes"""
+    """Log transaction details"""
     logger.info(
         f"Transaction: {card_number[-4:]}, "
-        f"Amount: {amount:.2f}, "
+        f"Amount: ₹{amount:,.2f}, "
         f"Status: {status}, "
         f"Reason: {reason}"
     )
 
-@app.route('/')
-def index():
-    """Main dashboard showing card status overview"""
-    return render_template(
-        'index.html',
-        valid_cards=valid_cards,
-        reported_cards=reported_stolen_cards,
-        suspected_cards=suspected_cards,
-        total_cards=len(valid_cards),
-        stolen_count=len(reported_stolen_cards),
-        suspected_count=len(suspected_cards)
-    )
+# Shopping Interface Routes
+@app.route('/demo')
+def shopping_portal():
+    """Shopping interface"""
+    cart = session.get('cart', {})
+    cart_total = sum(item['price'] * item['quantity'] for item in cart.values())
+    return render_template('demo.html',
+                         products=PRODUCTS,
+                         cart=cart,
+                         cart_total=cart_total)
 
-@app.route('/api/cards', methods=['GET'])
-def get_cards_api():
-    """API endpoint for card data"""
-    return jsonify({
-        'valid_cards': valid_cards,
-        'reported_stolen': reported_stolen_cards,
-        'suspected_cards': suspected_cards
-    })
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    """Add item to cart"""
+    product_id = request.form.get('product_id')
+    product = next((p for p in PRODUCTS if str(p['id']) == product_id), None)
+    
+    if product:
+        cart = session.get('cart', {})
+        cart_key = str(product['id'])
+        cart[cart_key] = {
+            'name': product['name'],
+            'price': product['price'],
+            'quantity': cart.get(cart_key, {'quantity': 0})['quantity'] + 1,
+            'image': product['image']
+        }
+        session['cart'] = cart
+    return redirect(url_for('shopping_portal'))
 
+@app.route('/update_cart', methods=['POST'])
+def update_cart():
+    """Modify cart contents"""
+    product_id = request.form.get('product_id')
+    action = request.form.get('action')
+    
+    cart = session.get('cart', {})
+    if product_id in cart:
+        if action == 'increase':
+            cart[product_id]['quantity'] += 1
+        elif action == 'decrease' and cart[product_id]['quantity'] > 1:
+            cart[product_id]['quantity'] -= 1
+        elif action == 'remove':
+            del cart[product_id]
+    
+    session['cart'] = cart
+    return redirect(url_for('shopping_portal'))
+
+@app.route('/checkout', methods=['POST'])
+def process_checkout():
+    """Handle checkout process"""
+    try:
+        card_number = request.form.get('card_number', '').replace(' ', '')
+        card_name = request.form.get('card_name', '')
+        expiry = request.form.get('expiry', '')
+        cvv = request.form.get('cvv', '')
+        
+        if not all([card_number, card_name, expiry, cvv]):
+            return render_template('error.html', message="All fields are required"), 400
+
+        cart = session.get('cart', {})
+        if not cart:
+            return redirect(url_for('shopping_portal'))
+            
+        total_amount = sum(item['price'] * item['quantity'] for item in cart.values())
+        
+        if card_number in reported_stolen_cards:
+            return render_template('blocked.html',
+                                card_number=card_number,
+                                details=reported_stolen_cards[card_number])
+        
+        transaction = {
+            'transaction_id': f"TX-{datetime.now().timestamp()}",
+            'Amount': total_amount,
+            **{f'V{i}': np.random.randn() for i in range(1, 29)}
+        }
+        
+        detection_result = detector.detect_fraud(transaction)
+        
+        if detection_result['is_fraud']:
+            suspected_cards[card_number] = {
+                'first_detected': datetime.now().isoformat(),
+                'transactions': [transaction]
+            }
+            return render_template('checkout_result.html',
+                                detection_result=detection_result,
+                                card_number=card_number,
+                                total_amount=total_amount)
+        else:
+            transaction_id = f"ORD-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+            session.pop('cart', None)
+            return render_template('success.html',
+                                transaction_id=transaction_id,
+                                card_number=card_number,
+                                total_amount=total_amount,
+                                cart_items=cart.values())
+
+    except Exception as e:
+        logger.error(f"Checkout error: {str(e)}")
+        return render_template('error.html',
+                            message="An error occurred during checkout"), 500
+
+# Fraud Management Routes
 @app.route('/report_stolen', methods=['POST'])
-def report_stolen():
-    """Endpoint for reporting stolen cards with enhanced validation"""
+def report_stolen_card():
+    """Handle stolen card reports"""
     try:
         raw_card = request.form.get('card_number', '').strip()
         card_number = ''.join(filter(str.isdigit, raw_card))
         
-        if not (13 <= len(card_number) <= 19):
+        if not 13 <= len(card_number) <= 19:
             return "Invalid card number length", 400
             
         if card_number not in valid_cards:
@@ -107,7 +210,6 @@ def report_stolen():
         if card_number in reported_stolen_cards:
             return "Card already reported", 409
             
-        # Add reporting details
         reported_stolen_cards[card_number] = {
             'reported_date': datetime.now().strftime("%Y-%m-%d"),
             'reported_by': request.form.get('reporter_name', 'Customer'),
@@ -115,97 +217,28 @@ def report_stolen():
         }
         
         logger.warning(f"🚨 Card reported stolen: {card_number[-4:]}")
-        return redirect(url_for('stolen_reported', card_number=card_number))
+        return redirect(url_for('stolen_card_confirmation', card_number=card_number))
         
     except Exception as e:
-        logger.error(f"Error reporting stolen card: {str(e)}")
+        logger.error(f"Error reporting card: {str(e)}")
         return "Internal server error", 500
 
-@app.route('/check_transaction', methods=['POST'])
-def check_transaction():
-    """Enhanced transaction checking endpoint"""
-    try:
-        # Get and validate input
-        card_number = request.form.get('card_number', '').strip()
-        amount = float(request.form.get('amount', 0))
-        
-        if card_number not in valid_cards:
-            return render_template('error.html', 
-                                 message="Invalid card number"), 400
-        
-        # Check against stolen lists (immediate block)
-        if card_number in reported_stolen_cards:
-            log_transaction(card_number, amount, "BLOCKED", "Reported stolen")
-            return render_template('result.html',
-                                status="BLOCKED",
-                                reason="Card reported stolen",
-                                card_number=card_number,
-                                amount=amount,
-                                card_details=valid_cards[card_number],
-                                stolen_details=reported_stolen_cards.get(card_number))
-        
-        # Create transaction data with proper features
-        transaction = {
-            'transaction_id': f"TX-{datetime.now().timestamp()}",
-            'Amount': amount,
-            **{f'V{i}': np.random.randn() for i in range(1, 29)}
-        }
-        
-        # Use your existing detector for fraud detection
-        detection_result = detector.detect_fraud(transaction)
-        
-        # Handle detection results
-        if detection_result['is_fraud']:
-            # Update suspected cards tracking
-            if card_number not in suspected_cards:
-                suspected_cards[card_number] = {
-                    'first_detected': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    'alert_count': 0,
-                    'transactions': []
-                }
-            
-            suspected_cards[card_number]['alert_count'] += 1
-            suspected_cards[card_number]['last_alert'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            suspected_cards[card_number]['transactions'].append({
-                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                'amount': amount,
-                'confidence': detection_result['fraud_probability']
-            })
-            
-            log_transaction(card_number, amount, "BLOCKED", 
-                           f"Fraud detected (confidence: {detection_result['fraud_probability']:.2%})")
-            
-            return render_template('result.html',
-                                status="BLOCKED",
-                                reason=f"Fraud detected (confidence: {detection_result['fraud_probability']:.2%})",
-                                card_number=card_number,
-                                amount=amount,
-                                card_details=valid_cards[card_number],
-                                detection_details=detection_result)
-        
-        # Legitimate transaction
-        log_transaction(card_number, amount, "APPROVED", "Legitimate transaction")
-        return render_template('result.html',
-                            status="APPROVED",
-                            reason="Transaction appears legitimate",
-                            card_number=card_number,
-                            amount=amount,
-                            card_details=valid_cards[card_number],
-                            detection_details=detection_result)
-    
-    except ValueError as e:
-        logger.error(f"Validation error: {str(e)}")
-        return render_template('error.html', message=str(e)), 400
-    except Exception as e:
-        logger.error(f"Transaction check error: {str(e)}")
-        return render_template('error.html', 
-                            message="An error occurred processing your transaction"), 500
+@app.route('/stolen_reported/<card_number>')
+def stolen_card_confirmation(card_number: str):
+    """Show stolen card report confirmation"""
+    return render_template('stolen_reported.html',
+                         card_number=card_number,
+                         card_details=valid_cards.get(card_number, {}),
+                         stolen_details=reported_stolen_cards.get(card_number, {}))
 
-@app.route('/transaction_history')
-def transaction_history():
-    """Endpoint to view transaction history"""
-    # Implement transaction history logic here
-    pass
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+# Main Dashboard
+@app.route('/')
+def fraud_dashboard():
+    """Main fraud monitoring dashboard"""
+    return render_template('index.html',
+                         valid_cards=valid_cards,
+                         reported_cards=reported_stolen_cards,
+                         suspected_cards=suspected_cards,
+                         total_cards=len(valid_cards),
+                         stolen_count=len(reported_stolen_cards),
+                         suspected_count=len(suspected_cards))

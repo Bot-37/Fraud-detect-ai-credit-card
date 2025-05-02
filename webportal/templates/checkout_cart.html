@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naan Mudhalavan Shopping - Checkout Result</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #14b8a6;
+            --dark: #111827;
+            --dark-card: #1f2937;
+            --dark-light: #374151;
+            --light: #e5e7eb;
+            --light-gray: #9ca3af;
+            --dark-gray: #4b5563;
+            --danger: #ef4444;
+            --success: #10b981;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--dark-card);
+            border-bottom: 1px solid var(--dark-light);
+            padding: 1.25rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo-container {
+            width: 150px;
+            height: 100px;
+            background-color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--light);
+        }
+        
+        .tagline {
+            font-size: 0.875rem;
+            color: var(--light-gray);
+            margin-top: 0.125rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .result-card {
+            width: 100%;
+            background-color: var(--dark-card);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            padding: 0;
+            animation: cardFadeIn 0.5s ease-out;
+        }
+        
+        .result-header {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .fraudulent .result-header {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .legitimate .result-header {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .result-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result-header .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-details {
+            padding: 2rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 1px solid var(--dark-light);
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--light-gray);
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        .fraud-reason {
+            background-color: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            color: var(--danger);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .success-message {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--success);
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            color: var(--success);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            font-weight: 600;
+            text-align: center;
+            padding: 0.875rem 2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            text-decoration: none;
+            margin-top: 2rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .footer-actions {
+            text-align: center;
+            padding: 0 2rem 2rem;
+        }
+        
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="brand">
+                <div class="logo-container">
+                    <img src="/data/image.png" alt="Naan Mudhalavan Logo">
+                </div>
+                <div class="brand-text">
+                    <div class="logo-text">Naan Mudhalavan Shopping</div>
+                    <p class="tagline">Smart Shopping with Fraud Protection</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="result-card {% if detection_result.is_fraud %}fraudulent{% else %}legitimate{% endif %}">
+            <div class="result-header">
+                {% if detection_result.is_fraud %}
+                <div class="icon">🚨</div>
+                <h2>Fraud Detected!</h2>
+                <p>This transaction has been blocked for your protection</p>
+                {% else %}
+                <div class="icon">✅</div>
+                <h2>Transaction Approved</h2>
+                <p>Your payment has been processed successfully</p>
+                {% endif %}
+            </div>
+            
+            <div class="result-details">
+                <div class="detail-item">
+                    <span class="detail-label">Transaction Amount</span>
+                    <span class="detail-value">₹{{ "{:,.0f}".format(total_amount) }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Card Number</span>
+                    <span class="detail-value">**** **** **** {{ card_number[-4:] }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Transaction Date</span>
+                    <span class="detail-value">{{ current_date }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Fraud Probability</span>
+                    <span class="detail-value">{{ "%.2f"|format(detection_result.fraud_probability * 100) }}%</span>
+                </div>
+                
+                {% if detection_result.is_fraud %}
+                <div class="fraud-reason">
+                    <strong>Reason for Decline:</strong> {{ detection_result.verdict }}
+                </div>
+                {% else %}
+                <div class="success-message">
+                    <strong>Thank you for your purchase!</strong> Your order has been confirmed and will be processed shortly.
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="footer-actions">
+                <a href="/demo" class="btn btn-primary btn-block">Return to Shopping</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Optional: Add any JavaScript you might need
+        document.addEventListener('DOMContentLoaded', function() {
+            // You can add any initialization code here
+            console.log('Checkout result page loaded');
+        });
+    </script>
+</body>
+</html>
