@@ -92,6 +92,7 @@
             box-shadow: var(--card-shadow);
             padding: 0;
             animation: cardFadeIn 0.5s ease-out;
+            position: relative;
         }
         
         .result-header {
@@ -199,8 +200,54 @@
         .footer-actions {
             text-align: center;
             padding: 0 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
         
+        /* Close button styles */
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            z-index: 10;
+        }
+        
+        .close-btn:hover {
+            background-color: rgba(0, 0, 0, 0.4);
+            transform: scale(1.1);
+        }
+        
+        /* Animation for closing the card */
+        @keyframes cardFadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+        
+        .card-hidden {
+            animation: cardFadeOut 0.3s ease-out forwards;
+            pointer-events: none;
+        }
+        
+        /* Default animation for showing the card */
         @keyframes cardFadeIn {
             from {
                 opacity: 0;
@@ -210,6 +257,28 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+        
+        /* Empty state for when card is closed */
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .empty-state.visible {
+            display: block;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+        
+        .empty-state p {
+            color: var(--light-gray);
+            margin-bottom: 2rem;
         }
         
         @media (max-width: 768px) {
@@ -224,7 +293,7 @@
         <div class="container">
             <div class="brand">
                 <div class="logo-container">
-                    <img src="/data/image.png" alt="Naan Mudhalavan Logo">
+                    <img src="/api/placeholder/150/100" alt="Naan Mudhalavan Logo">
                 </div>
                 <div class="brand-text">
                     <div class="logo-text">Naan Mudhalavan Shopping</div>
@@ -235,7 +304,9 @@
     </header>
 
     <div class="container">
-        <div class="result-card {% if detection_result.is_fraud %}fraudulent{% else %}legitimate{% endif %}">
+        <div class="result-card {% if detection_result.is_fraud %}fraudulent{% else %}legitimate{% endif %}" id="resultCard">
+            <button class="close-btn" id="closeCardBtn" aria-label="Close">&times;</button>
+            
             <div class="result-header">
                 {% if detection_result.is_fraud %}
                 <div class="icon">🚨</div>
@@ -281,13 +352,34 @@
                 <a href="/demo" class="btn btn-primary btn-block">Return to Shopping</a>
             </div>
         </div>
+        
+        <!-- Empty state to show when card is closed -->
+        <div class="empty-state" id="emptyState">
+            <h3>Transaction Summary Closed</h3>
+            <p>You've dismissed the transaction details.</p>
+            <a href="/demo" class="btn btn-primary">Return to Shopping</a>
+        </div>
     </div>
     
     <script>
-        // Optional: Add any JavaScript you might need
         document.addEventListener('DOMContentLoaded', function() {
-            // You can add any initialization code here
-            console.log('Checkout result page loaded');
+            // Card close functionality
+            const closeBtn = document.getElementById('closeCardBtn');
+            const resultCard = document.getElementById('resultCard');
+            const emptyState = document.getElementById('emptyState');
+            
+            closeBtn.addEventListener('click', function() {
+                // Add animation class
+                resultCard.classList.add('card-hidden');
+                
+                // After animation completes, hide card and show empty state
+                setTimeout(function() {
+                    resultCard.style.display = 'none';
+                    emptyState.classList.add('visible');
+                }, 300); // Match this to the animation duration (0.3s = 300ms)
+            });
+            
+            console.log('Checkout result page loaded with close functionality');
         });
     </script>
 </body>

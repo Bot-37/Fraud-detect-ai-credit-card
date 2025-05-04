@@ -90,26 +90,6 @@
         "fraudulent": false
     },
     {
-        "id": 10,
-        "name": "Debra Christensen",
-        "card_number": "344332894339656",
-        "cvv": "6876",
-        "expiry_date": "04/30",
-        "card_type": "Amex",
-        "billing_address": "75698 Luna Landing Apt. 554, West Manueltown, VA 67928",
-        "fraudulent": true
-    },
-    {
-        "id": 11,
-        "name": "Jaime Mckee",
-        "card_number": "349178846163826",
-        "cvv": "9759",
-        "expiry_date": "07/25",
-        "card_type": "Amex",
-        "billing_address": "2068 Foster Branch, South Tara, NM 95755",
-        "fraudulent": true
-    },
-    {
         "id": 12,
         "name": "Leonard Williams",
         "card_number": "5170355198404544",
@@ -160,16 +140,6 @@
         "fraudulent": false
     },
     {
-        "id": 17,
-        "name": "Jeffery Morgan",
-        "card_number": "4026488719650979",
-        "cvv": "391",
-        "expiry_date": "07/26",
-        "card_type": "Visa",
-        "billing_address": "1273 Peterson Estates, New Corey, NM 90376",
-        "fraudulent": true
-    },
-    {
         "id": 18,
         "name": "Anna Johnson",
         "card_number": "5336241834898516",
@@ -178,36 +148,6 @@
         "card_type": "MasterCard",
         "billing_address": "37886 Derrick Terrace Suite 175, Brownfort, PA 59034",
         "fraudulent": false
-    },
-    {
-        "id": 19,
-        "name": "Jackie Jacobs",
-        "card_number": "347948763018449",
-        "cvv": "9718",
-        "expiry_date": "03/29",
-        "card_type": "Amex",
-        "billing_address": "3250 Emily Flat Suite 052, South Ryanview, KY 22421",
-        "fraudulent": true
-    },
-    {
-        "id": 20,
-        "name": "Gina Wilkins",
-        "card_number": "347628870121233",
-        "cvv": "6829",
-        "expiry_date": "06/25",
-        "card_type": "Amex",
-        "billing_address": "135 Andrea Spurs Apt. 356, South Timothy, MS 36572",
-        "fraudulent": true
-    },
-    {
-        "id": 21,
-        "name": "Daniel Rice",
-        "card_number": "5419045441662938",
-        "cvv": "227",
-        "expiry_date": "10/30",
-        "card_type": "MasterCard",
-        "billing_address": "170 Perez Trail Apt. 472, New Benjamin, MO 88178",
-        "fraudulent": true
     },
     {
         "id": 22,
@@ -228,16 +168,6 @@
         "card_type": "Visa",
         "billing_address": "952 Lori Village, West Markton, IN 81215",
         "fraudulent": false
-    },
-    {
-        "id": 24,
-        "name": "Laura Ford",
-        "card_number": "4287115716591609",
-        "cvv": "447",
-        "expiry_date": "08/26",
-        "card_type": "Visa",
-        "billing_address": "4111 Goodman Trafficway Suite 329, East Johnbury, LA 63477",
-        "fraudulent": true
     },
     {
         "id": 25,
@@ -330,36 +260,6 @@
         "fraudulent": false
     },
     {
-        "id": 34,
-        "name": "Jennifer Jackson",
-        "card_number": "345017701881607",
-        "cvv": "2602",
-        "expiry_date": "07/26",
-        "card_type": "Amex",
-        "billing_address": "46589 Mark Springs Suite 218, Catherineview, KS 85979",
-        "fraudulent": true
-    },
-    {
-        "id": 35,
-        "name": "Amber Johnson",
-        "card_number": "4978888150564860",
-        "cvv": "703",
-        "expiry_date": "10/29",
-        "card_type": "Visa",
-        "billing_address": "8698 Blackburn Ranch, Thomasport, IA 86429",
-        "fraudulent": true
-    },
-    {
-        "id": 36,
-        "name": "William Bass",
-        "card_number": "5432168175284498",
-        "cvv": "784",
-        "expiry_date": "02/27",
-        "card_type": "MasterCard",
-        "billing_address": "1152 Henry Rue, Smithshire, MS 48770",
-        "fraudulent": true
-    },
-    {
         "id": 37,
         "name": "Danielle Bernard",
         "card_number": "342600445413796",
@@ -368,16 +268,6 @@
         "card_type": "Amex",
         "billing_address": "023 Dennis Ranch Apt. 618, Port Amy, IL 62984",
         "fraudulent": false
-    },
-    {
-        "id": 38,
-        "name": "Erin Gilbert",
-        "card_number": "4433745994760931",
-        "cvv": "962",
-        "expiry_date": "10/28",
-        "card_type": "Visa",
-        "billing_address": "7347 Brandi Alley, Michelleville, SC 98826",
-        "fraudulent": true
     },
     {
         "id": 39,
@@ -480,16 +370,6 @@
         "fraudulent": false
     },
     {
-        "id": 49,
-        "name": "Jasmine Greene",
-        "card_number": "342814165929879",
-        "cvv": "4422",
-        "expiry_date": "12/30",
-        "card_type": "Amex",
-        "billing_address": "6701 Lauren Terrace Suite 647, Johnhaven, MS 24957",
-        "fraudulent": true
-    },
-    {
         "id": 50,
         "name": "Courtney Munoz",
         "card_number": "4601055033212225",
@@ -508,16 +388,6 @@
         "card_type": "Amex",
         "billing_address": "430 West Viaduct, Welchborough, NY 83829",
         "fraudulent": false
-    },
-    {
-        "id": 52,
-        "name": "Chris Lopez",
-        "card_number": "348653849814659",
-        "cvv": "9229",
-        "expiry_date": "08/25",
-        "card_type": "Amex",
-        "billing_address": "96269 Madison Green Apt. 322, South Jessicaview, ID 62905",
-        "fraudulent": true
     },
     {
         "id": 53,
@@ -550,26 +420,6 @@
         "fraudulent": false
     },
     {
-        "id": 56,
-        "name": "Megan Herrera",
-        "card_number": "341997015271328",
-        "cvv": "2967",
-        "expiry_date": "08/25",
-        "card_type": "Amex",
-        "billing_address": "25895 Ramos Roads Apt. 394, Sharpton, IA 48135",
-        "fraudulent": true
-    },
-    {
-        "id": 57,
-        "name": "Rachel Russell",
-        "card_number": "5122827590309546",
-        "cvv": "478",
-        "expiry_date": "07/26",
-        "card_type": "MasterCard",
-        "billing_address": "24648 Hicks Road, East Peter, MS 65283",
-        "fraudulent": true
-    },
-    {
         "id": 58,
         "name": "Deborah Harrell",
         "card_number": "340610502390508",
@@ -590,16 +440,6 @@
         "fraudulent": false
     },
     {
-        "id": 60,
-        "name": "Alexis Waters",
-        "card_number": "5546644644443744",
-        "cvv": "238",
-        "expiry_date": "04/28",
-        "card_type": "MasterCard",
-        "billing_address": "36029 Suzanne Street, Lake Mikeview, WA 81052",
-        "fraudulent": true
-    },
-    {
         "id": 61,
         "name": "Sabrina Vasquez",
         "card_number": "4501191797158097",
@@ -618,16 +458,6 @@
         "card_type": "Amex",
         "billing_address": "80729 Nichole Isle Apt. 148, Wilcoxburgh, NJ 16286",
         "fraudulent": false
-    },
-    {
-        "id": 63,
-        "name": "Meredith Elliott",
-        "card_number": "4037692100227902",
-        "cvv": "984",
-        "expiry_date": "06/28",
-        "card_type": "Visa",
-        "billing_address": "Unit 6371 Box 3278, DPO AE 33156",
-        "fraudulent": true
     },
     {
         "id": 64,
@@ -680,16 +510,6 @@
         "fraudulent": false
     },
     {
-        "id": 69,
-        "name": "John Robinson",
-        "card_number": "5479687715697723",
-        "cvv": "244",
-        "expiry_date": "01/25",
-        "card_type": "MasterCard",
-        "billing_address": "90529 Smith Via, Sheilabury, ID 15468",
-        "fraudulent": true
-    },
-    {
         "id": 70,
         "name": "Frank Marquez",
         "card_number": "5201104016238095",
@@ -698,16 +518,6 @@
         "card_type": "MasterCard",
         "billing_address": "21632 Tara Oval Suite 799, Jensenchester, MT 83679",
         "fraudulent": false
-    },
-    {
-        "id": 71,
-        "name": "Stephanie Cruz",
-        "card_number": "348565823914612",
-        "cvv": "8180",
-        "expiry_date": "01/30",
-        "card_type": "Amex",
-        "billing_address": "923 Michelle Pine Apt. 785, West Loriport, SC 80493",
-        "fraudulent": true
     },
     {
         "id": 72,
@@ -890,26 +700,6 @@
         "fraudulent": false
     },
     {
-        "id": 90,
-        "name": "Dr. Cole Acosta II",
-        "card_number": "5286315143442024",
-        "cvv": "474",
-        "expiry_date": "09/28",
-        "card_type": "MasterCard",
-        "billing_address": "5787 Erika Plaza Suite 756, Kathleenville, OK 20804",
-        "fraudulent": true
-    },
-    {
-        "id": 91,
-        "name": "Michael Johnson",
-        "card_number": "5170660320387594",
-        "cvv": "832",
-        "expiry_date": "11/30",
-        "card_type": "MasterCard",
-        "billing_address": "02648 Ballard Mountain Apt. 011, Harryport, CO 88607",
-        "fraudulent": true
-    },
-    {
         "id": 92,
         "name": "Timothy Silva",
         "card_number": "4442518036727831",
@@ -920,26 +710,6 @@
         "fraudulent": false
     },
     {
-        "id": 93,
-        "name": "Rickey Wood",
-        "card_number": "343430955759514",
-        "cvv": "7368",
-        "expiry_date": "07/29",
-        "card_type": "Amex",
-        "billing_address": "2592 Stevens Prairie Apt. 811, Avilafurt, LA 20481",
-        "fraudulent": true
-    },
-    {
-        "id": 94,
-        "name": "Tiffany Lopez",
-        "card_number": "4720689756453685",
-        "cvv": "377",
-        "expiry_date": "02/25",
-        "card_type": "Visa",
-        "billing_address": "8565 Andre Mountains Apt. 005, New Vanessaview, WI 73731",
-        "fraudulent": true
-    },
-    {
         "id": 95,
         "name": "Amanda Gallegos",
         "card_number": "4737250335730944",
@@ -948,16 +718,6 @@
         "card_type": "Visa",
         "billing_address": "91169 Jasmine Springs, Port Stephanieside, UT 04379",
         "fraudulent": false
-    },
-    {
-        "id": 96,
-        "name": "Brittany Reyes",
-        "card_number": "349837298397709",
-        "cvv": "1635",
-        "expiry_date": "10/29",
-        "card_type": "Amex",
-        "billing_address": "31053 Goodman Rest Apt. 364, Mclaughlinhaven, VT 22726",
-        "fraudulent": true
     },
     {
         "id": 97,
