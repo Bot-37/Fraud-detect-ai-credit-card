@@ -141,5 +141,5 @@ MIT License – Use it responsibly and ethically.
 
 ## 👨‍💻 Developed by
 
-**Fahad (Boss)**  
+**Bot-37**  
 Credit Card Fraud Defense Initiative – AI + Security Lab  
