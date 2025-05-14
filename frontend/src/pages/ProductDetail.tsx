@@ -5,7 +5,7 @@ import { getProductById } from "@/data/mockData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/Context/CartContext";
 import { Product } from "@/components/ProductCard";
 
 const ProductDetail = () => {

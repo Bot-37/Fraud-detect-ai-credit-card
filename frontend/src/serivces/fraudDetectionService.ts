@@ -1,69 +1,64 @@
+export interface TransactionData {
+  cardNumber: string;
+  cardHolderName: string;
+  amount: number;
+  transactionDate: string;
+  transactionType: string;
+  merchantName: string;
+  merchantCategory: string;
+}
 
-// This service will handle the interaction with the server.py API
-// which connects to your fraud_detector.py
+export interface FraudCheckResult {
+  isFraudulent: boolean;
+  score: number;
+  reason?: string;
+}
 
-interface TransactionData {
-    cardNumber: string;
-    amount: number;
-    cardholderName: string;
-    transactionDate: string;
-    [key: string]: any; // Allow for additional transaction data
+export class FraudDetectionService {
+  private apiUrl: string;
+
+  constructor(apiUrl: string = 'http://localhost:5000/check-transaction') {
+    this.apiUrl = apiUrl;
   }
-  
-  interface FraudDetectionResponse {
-    isFraudulent: boolean;
-    score: number;
-    reason?: string;
-  }
-  
-  class FraudDetectionService {
-    private apiUrl: string;
-    
-    constructor(apiUrl: string = 'http://localhost:5000/api/detect-fraud') {
-      this.apiUrl = apiUrl;
-    }
-    
-    async checkTransaction(transactionData: TransactionData): Promise<FraudDetectionResponse> {
-      try {
-        // In a real-world scenario, this would make an actual API call to your server.py
-        // For now, we'll simulate with a mock response
-        
-        console.log('Sending transaction for fraud detection:', transactionData);
-        
-        // This is just a placeholder for the actual API call
-        // const response = await fetch(this.apiUrl, {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify(transactionData),
-        // });
-        
-        // if (!response.ok) {
-        //   throw new Error(`Error: ${response.status}`);
-        // }
-        
-        // const data = await response.json();
-        // return data;
-        
-        // For now, returning a mock response
-        return {
-          isFraudulent: Math.random() < 0.1, // 10% chance of fraud detection for demo
-          score: Math.random(),
-          reason: Math.random() < 0.1 ? 'Unusual transaction amount' : undefined
-        };
-      } catch (error) {
-        console.error('Error detecting fraud:', error);
-        throw error;
+
+  async checkTransaction(transactionData: TransactionData): Promise<FraudCheckResult> {
+    try {
+      const response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Correlation-ID': 'demo-correlation-id' // optional but good for logging
+        },
+        body: JSON.stringify({
+          card_id: transactionData.cardNumber,
+          amount: transactionData.amount,
+          merchant_id: "M123456", // Optional: Replace with dynamic value if available
+          timestamp: transactionData.transactionDate,
+          location: {
+            city: "Chennai",
+            lat: 13.08,
+            lon: 80.27
+          },
+          device_fingerprint: "device-abc-xyz",
+          metadata: {}
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status} ${response.statusText}`);
       }
-    }
-    
-    // This method will be used when you connect your actual fraud_detector.py
-    setApiUrl(url: string): void {
-      this.apiUrl = url;
+
+      const data = await response.json();
+
+      return {
+        isFraudulent: data.is_fraud,
+        score: data.risk_score,
+        reason: data.reasons?.join(', ') || 'No specific reason provided'
+      };
+
+    } catch (error) {
+      console.error('Fraud detection API call failed:', error);
+      throw error;
     }
   }
-  
-  export const fraudDetectionService = new FraudDetectionService();
-  export default fraudDetectionService;
-  
+}

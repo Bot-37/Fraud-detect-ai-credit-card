@@ -1,10 +1,10 @@
-# config.py
 from pathlib import Path
+import os
 
 # === Core Configuration ===
 BASE_DIR = Path(__file__).resolve().parent
 API_VERSION = "1.3.0"
-APP_ENV = "development"  # production/staging/development
+APP_ENV = os.getenv("APP_ENV", "production")  # changeable via environment variable
 
 # === Path Configuration ===
 PATHS = {
@@ -20,7 +20,7 @@ RULES_CONFIG = {
     "hourly_limit": 5000,         # USD per hour
     "ml_threshold": 0.82,         # Probability threshold
     "allowed_countries": ["US", "CA", "GB", "DE", "FR"],
-    "high_risk_countries": ["RU", "CN", "NG", "IR"],
+    "high_risk_countries": ["RU", "CN", "NG", "IR", "KP"],
     "geo_check": True,
     "device_check": True
 }
@@ -39,10 +39,14 @@ MODEL_CONFIG = {
 SECURITY_CONFIG = {
     "cors_origins": [
         "http://localhost:3000",
-        "http://127.0.0.1:3000"
+        "http://127.0.0.1:3000",  # Replace with production frontend domain
     ],
     "rate_limits": {
-        "api": "1000/day",
-        "auth": "50/hour"
-    }
+        "api": "500/day",
+        "auth": "20/hour"
+    },
+    "https_redirect": True,
+    "content_security_policy": "default-src 'self'; script-src 'self'; object-src 'none'",
+    "x_frame_options": "DENY",
+    "x_content_type_options": "nosniff"
 }

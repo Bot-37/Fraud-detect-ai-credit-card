@@ -6,7 +6,7 @@ import FeaturedProducts from "@/components/FeaturedProducts";
 import CategoryList from "@/components/CategoryList";
 import Footer from "@/components/Footer";
 import { mockProducts, categories } from "@/data/mockData";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/Context/CartContext";
 import { Product } from "@/components/ProductCard";
 
 const Index = () => {

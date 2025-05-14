@@ -1,7 +1,17 @@
-import json
-import os
+import logging
 
-def load_transactions():
-    data_path = os.path.join(os.path.dirname(__file__), "data", "transactions.json")
-    with open(data_path, "r") as file:
-        return json.load(file)
+# Setup logger
+logger = logging.getLogger("fraud_detector")
+logger.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
+# Example utility function: You can expand this with validation, etc.
+def log_info(message: str):
+    logger.info(message)
+
+def log_error(message: str):
+    logger.error(message)

@@ -5,7 +5,7 @@ import { CheckCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/Context/CartContext";
 
 const OrderSuccess = () => {
   const { clearCart } = useCart();

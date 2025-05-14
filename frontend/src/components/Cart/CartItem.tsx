@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
-import { Button } from "../../ui/button";
-import { Product } from "@/components/ui/ProductCard";
+import { Button } from "@/components/ui/button";
+import { Product } from "@/components/ProductCard";
 import { useToast } from "@/hooks/use-toast";
 
 interface CartItemProps {

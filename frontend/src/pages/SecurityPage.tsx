@@ -1,4 +1,3 @@
-
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Shield, Lock, AlertTriangle, CheckCircle } from "lucide-react";
@@ -8,7 +7,7 @@ const SecurityPage = () => {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <main className="flex-grow">
-        <div className="bg-gradient-to-r from-brand-DEFAULT to-brand-secondary text-white py-16">
+        <div className="bg-gradient-to-r from-brand-DEFAULT to-brand-secondary text-gray-900 py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
               <Shield className="mx-auto h-16 w-16 mb-6" />

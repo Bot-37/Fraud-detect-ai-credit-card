@@ -6,7 +6,7 @@ import { Product } from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/Context/CartContext";
 
 const CategoryPage = () => {
   const { id } = useParams<{ id: string }>();
