@@ -1,5 +1,3 @@
-import pandas as pd
-from typing import List, Dict
 import os
 import logging
 from logging.handlers import RotatingFileHandler

@@ -1,3 +1,5 @@
+//services/fraudDetectionService.ts
+
 export interface TransactionData {
   cardNumber: string;
   cardHolderName: string;
@@ -6,7 +8,7 @@ export interface TransactionData {
   transactionType: string;
   merchantName: string;
   merchantCategory: string;
-}
+} 
 
 export interface FraudCheckResult {
   isFraudulent: boolean;

@@ -1,26 +1,25 @@
-# app/api/routes/auth.py
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
 router = APIRouter()
 
-# 🧑 Dummy admin credentials
 DUMMY_ADMIN = {
     "username": "admin",
     "password": "admin123",
     "role": "admin"
 }
 
-# 📥 Request schema
 class LoginRequest(BaseModel):
     username: str
     password: str
 
-# 📤 Response schema (optional, for clarity)
 class LoginResponse(BaseModel):
     access_token: str
     token_type: str
     role: str
+
+security = HTTPBearer()
 
 @router.post("/login", response_model=LoginResponse)
 def login_user(data: LoginRequest):
@@ -34,3 +33,12 @@ def login_user(data: LoginRequest):
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid credentials"
     )
+
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    if token != "fake-jwt-token-demo-only":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token"
+        )
+    return {"username": "admin", "role": "admin"}

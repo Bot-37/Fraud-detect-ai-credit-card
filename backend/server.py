@@ -1,61 +1,96 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
-from app.model.fraud_detector import predict_fraud  # Assuming this function handles fraud prediction
-from app.utils.logger import get_logger  # Assuming this is for logging
-import logging
+from app.model.fraud_detector import predict_fraud
+from app.utils.logger import get_logger
+import os
 
-# Initialize FastAPI app
-app = FastAPI()
+# === Initialize FastAPI ===
+app = FastAPI(title="Credit Card Fraud Detection API", version="1.0.0")
 
-# Set up logging
-logger = get_logger()
+# === Enable CORS for React Frontend ===
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:8000",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Define the structure of the incoming transaction data
+# === Path to React static build ===
+react_build_dir = os.path.join("app", "static", "dist")
+
+# === Mount React build directory at root "/" to serve index.html and assets correctly ===
+if os.path.exists(react_build_dir):
+    app.mount("/", StaticFiles(directory=react_build_dir, html=True), name="react")
+else:
+    print("[WARNING] React static files not found, skipping mount.")
+
+# === Logger ===
+logger = get_logger(__name__)
+
+# === Pydantic Schema for Transaction Input ===
 class Transaction(BaseModel):
     amount: float
     time: str
     card_number: str
     merchant_id: str
     card_type: str
-    location: str  # Expecting location in the format "latitude, longitude"
-    
-    # Optional fields (could be added for future extensions)
+    location: str
     user_id: str = None
     transaction_id: str = None
 
-# Route for fraud prediction
+# === Prediction API ===
 @app.post("/predict")
 async def predict_transaction(transaction: Transaction):
-    """
-    Endpoint to predict if a transaction is fraudulent or not.
-    Accepts transaction data, including amount, card info, and location.
-    """
     try:
-        # Log the incoming transaction data (for monitoring purposes)
-        logger.info(f"Received transaction data: {transaction.dict()}")
+        logger.info(f"[INPUT] Transaction received: {transaction.dict()}")
 
-        # Make prediction using the fraud detection model
-        prediction_result = predict_fraud(transaction.dict())  # Assuming the function processes the data
+        model_input = {
+            "amount": transaction.amount,
+            "time": transaction.time,
+            "card_number": transaction.card_number,
+            "merchant_id": transaction.merchant_id,
+            "card_type": transaction.card_type,
+            "location": transaction.location,
+            "user_id": transaction.user_id or "anonymous",
+            "transaction_id": transaction.transaction_id or "txn-0001"
+        }
 
-        # Check if the prediction result is valid (fraud result should exist)
-        if prediction_result:
-            fraud_prediction = prediction_result["prediction"]
-            fraud_probability = prediction_result["probability"]
-        else:
-            raise HTTPException(status_code=400, detail="Prediction failed")
+        prediction_result = predict_fraud(model_input)
 
-        # Log prediction results for monitoring and future improvements
-        logger.info(f"Fraud prediction: {fraud_prediction}, Probability: {fraud_probability}")
+        if not prediction_result or "prediction" not in prediction_result or "probability" not in prediction_result:
+            raise HTTPException(status_code=400, detail="Invalid model output")
 
-        # Return the prediction result to the frontend
-        return {"prediction": fraud_prediction, "fraud_probability": fraud_probability}
+        fraud_prediction = prediction_result["prediction"]
+        fraud_probability = prediction_result["probability"]
 
-    except Exception as e:
-        logger.error(f"Error occurred during fraud prediction: {str(e)}")
+        logger.info(f"[OUTPUT] Prediction: {fraud_prediction}, Probability: {fraud_probability}")
+
+        return {
+            "status": "success",
+            "data": {
+                "transaction_id": model_input["transaction_id"],
+                "fraud_prediction": fraud_prediction,
+                "fraud_probability": fraud_probability,
+                "message": "⚠️ Fraud Detected!" if fraud_prediction else "✅ Transaction is Safe"
+            }
+        }
+
+    except HTTPException as http_err:
+        logger.warning(f"[WARNING] HTTP Error: {str(http_err)}")
+        raise http_err
+    except Exception as err:
+        logger.error(f"[ERROR] Unexpected Exception: {str(err)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-# For testing if server is working (Health Check)
+# === Health Check ===
 @app.get("/health")
-def read_health():
-    return {"status": "OK"}
-
+def health_check():
+    return {"status": "OK", "message": "Fraud Detection API is Live"}

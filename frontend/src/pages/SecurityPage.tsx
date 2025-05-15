@@ -1,3 +1,5 @@
+//pages/SecurityPage.tsx
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Shield, Lock, AlertTriangle, CheckCircle } from "lucide-react";
