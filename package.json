@@ -1,0 +1,17 @@
+{
+  "name": "fraud-detect-ai",
+  "version": "1.0.0",
+  "description": "![Fraud Detection Demo](data/Fraud-Detection-Demo.gif) <!-- Replace with actual screenshot path -->",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "backend": "uvicorn backend.server:app --host 0.0.0.0 --port 8000 --reload",
+    "frontend": "cd frontend && npm run dev",
+    "start": "concurrently \"npm run backend\" \"npm run frontend\""
+  }
+}
