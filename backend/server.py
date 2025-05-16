@@ -1,3 +1,5 @@
+#server.py
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -73,13 +75,22 @@ async def predict_transaction(transaction: Transaction):
 
         logger.info(f"[OUTPUT] Prediction: {fraud_prediction}, Probability: {fraud_probability}")
 
+        # If fraud detected, block the transaction with an HTTPException (status 403 Forbidden)
+        if fraud_prediction == 1:
+            logger.warning(f"Transaction {model_input['transaction_id']} blocked: Fraud detected")
+            raise HTTPException(
+                status_code=403,
+                detail=f"Transaction blocked: Fraudulent transaction detected with probability {fraud_probability}"
+            )
+
+        # If no fraud, allow transaction to proceed
         return {
-            "status": "success",
+            "status": "approved",
             "data": {
                 "transaction_id": model_input["transaction_id"],
                 "fraud_prediction": fraud_prediction,
                 "fraud_probability": fraud_probability,
-                "message": "⚠️ Fraud Detected!" if fraud_prediction else "✅ Transaction is Safe"
+                "message": "✅ Transaction is Safe"
             }
         }
 
@@ -89,6 +100,7 @@ async def predict_transaction(transaction: Transaction):
     except Exception as err:
         logger.error(f"[ERROR] Unexpected Exception: {str(err)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
 
 # === Health Check ===
 @app.get("/health")

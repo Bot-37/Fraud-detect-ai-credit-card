@@ -6,6 +6,7 @@ export interface TransactionData {
   amount: number;
   transactionDate: string;
   transactionType: string;
+  merchantId: string;
   merchantName: string;
   merchantCategory: string;
 } 
