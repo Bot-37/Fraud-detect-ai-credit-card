@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from .routes import auth, transactions
+from backend.api.routes import auth, transactions
 
 router = APIRouter()
 

@@ -1,6 +1,7 @@
 # Import Config and Logger Setup
 from backend.app.config import Config
 from backend.app.utils.logger import get_logger
+from backend.app.model.fraud_detector import load_model, predict_fraud
 
 
 # Global logger setup

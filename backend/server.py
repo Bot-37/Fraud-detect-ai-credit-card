@@ -1,33 +1,42 @@
 import os
 import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from backend.app.model.fraud_detector import predict_fraud
+from fastapi.responses import JSONResponse
 from fastapi import FastAPI, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel  
+from pydantic import BaseModel
+from typing import Optional
+from backend.app.model.fraud_detector import predict_fraud, load_model
 from backend.app.utils.logger import get_logger
 
-# === Initialize FastAPI ===
-app = FastAPI(title="Credit Card Fraud Detection API", version="1.0.0")
+# === Setup System Path for Imports ===
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# === Enable CORS for React Frontend ===
-origins = [
+# === Initialize FastAPI App ===
+app = FastAPI(
+    title="Credit Card Fraud Detection API",
+    version="1.0.0",
+    description="Predicts if a credit card transaction is fraudulent."
+)
+
+# === CORS Configuration ===    
+FRONTEND_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "http://localhost:8000",
+    "http://localhost:8000"
 ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=FRONTEND_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 # === Logger ===
 logger = get_logger(__name__)
 
-# === Pydantic Schema for Transaction Input ===
+# === Pydantic Schema ===
 class Transaction(BaseModel):
     amount: float
     time: str
@@ -35,10 +44,13 @@ class Transaction(BaseModel):
     merchant_id: str
     card_type: str
     location: str
-    user_id: str = None
-    transaction_id: str = None
+    user_id: Optional[str] = "anonymous"
+    transaction_id: Optional[str] = "txn-0001"
+    card_holder_name: Optional[str] = None
+    merchant_name: Optional[str] = None
+    merchant_category: Optional[str] = None
 
-# === API Router with prefix /api ===
+# === API Router ===
 api_router = APIRouter(prefix="/api")
 
 @api_router.post("/predict")
@@ -46,54 +58,91 @@ async def predict_transaction(transaction: Transaction):
     try:
         logger.info(f"[INPUT] Transaction received: {transaction.dict()}")
 
-        model_input = {
-            "amount": transaction.amount,
-            "time": transaction.time,
-            "card_number": transaction.card_number,
-            "merchant_id": transaction.merchant_id,
-            "card_type": transaction.card_type,
-            "location": transaction.location,
-            "user_id": transaction.user_id or "anonymous",
-            "transaction_id": transaction.transaction_id or "txn-0001"
-        }
-
-        prediction_result = predict_fraud(model_input)
+        # ✅ Await the coroutine
+        prediction_result = await predict_fraud(transaction.dict())
 
         if not prediction_result or "prediction" not in prediction_result or "probability" not in prediction_result:
+            logger.error(f"[ERROR] Invalid model output: {prediction_result}")
             raise HTTPException(status_code=400, detail="Invalid model output")
 
-        fraud_prediction = prediction_result["prediction"]
-        fraud_probability = prediction_result["probability"]
+        prediction = prediction_result["prediction"]
+        probability = prediction_result["probability"]
+        logger.info(f"[OUTPUT] Prediction: {prediction}, Probability: {probability}")
 
-        logger.info(f"[OUTPUT] Prediction: {fraud_prediction}, Probability: {fraud_probability}")
-
-        if fraud_prediction == 1:
-            logger.warning(f"Transaction {model_input['transaction_id']} blocked: Fraud detected")
-            raise HTTPException(
+        if prediction == 1:
+            logger.warning(f"[FRAUD] Transaction {transaction.transaction_id} BLOCKED (Probability: {probability})")
+            return JSONResponse(
                 status_code=403,
-                detail=f"Transaction blocked: Fraudulent transaction detected with probability {fraud_probability}"
+                content={
+                    "status": "blocked",
+                    "data": {
+                        "transaction_id": transaction.transaction_id,
+                        "fraud_prediction": prediction,
+                        "fraud_probability": probability,
+                        "message": f"❌ Transaction blocked: Fraudulent with probability {probability}"
+                    }
+                }
             )
 
         return {
             "status": "approved",
             "data": {
-                "transaction_id": model_input["transaction_id"],
-                "fraud_prediction": fraud_prediction,
-                "fraud_probability": fraud_probability,
+                "transaction_id": transaction.transaction_id,
+                "fraud_prediction": prediction,
+                "fraud_probability": probability,
                 "message": "✅ Transaction is Safe"
             }
         }
 
     except HTTPException as http_err:
-        logger.warning(f"[WARNING] HTTP Error: {str(http_err)}")
+        logger.warning(f"[HTTP ERROR] {str(http_err)}")
         raise http_err
     except Exception as err:
-        logger.error(f"[ERROR] Unexpected Exception: {str(err)}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        logger.error(f"[UNEXPECTED ERROR] {str(err)}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "status": "error",
+                "message": "Internal Server Error",
+                "detail": str(err)
+            }
+        )
 
 @api_router.get("/health")
 def health_check():
-    return {"status": "OK", "message": "Fraud Detection API is Live"}
+    """
+    Checks whether the ML model loads correctly.
+    """
+    try:
+        load_model()
+        return {"status": "OK", "message": "Fraud Detection API is Live"}
+    except Exception as e:
+        logger.error(f"[HEALTH CHECK ERROR] {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "status": "ERROR",
+                "message": f"Model load failed: {str(e)}"
+            }
+        )
 
-# === Include the router in the app ===
+@api_router.get("/status")
+def model_status():
+    """
+    Extra endpoint to verify model integrity and metadata (if supported).
+    """
+    try:
+        model = load_model()
+        return {"status": "OK", "message": "Model Loaded", "model": str(model)}
+    except Exception as e:
+        logger.error(f"[STATUS ERROR] {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "status": "ERROR",
+                "message": f"Could not load model: {str(e)}"
+            }
+        )
+
+# === Register Routes ===
 app.include_router(api_router)

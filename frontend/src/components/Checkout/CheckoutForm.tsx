@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
+import { FraudDetectionService } from "@/services/fraudDetectionService";
 
 // Define the form validation schema
 const formSchema = z.object({
@@ -60,12 +61,27 @@ const CheckoutForm = ({ subtotal, shipping, tax, total }: CheckoutFormProps) => 
 
   const onSubmit = async (data: FormValues) => {
     setIsProcessing(true);
-    
+  
     try {
-      // This is where we would integrate with fraud_detector.py via server.py
-      // For now, we'll simulate the API call with a timeout
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      
+      const fraudDetectionService = new FraudDetectionService();
+      const fraudResult = await fraudDetectionService.checkTransaction({
+        amount: total, // Subtotal + shipping + tax
+        transactionDate: new Date().toISOString(), // Current timestamp
+        cardNumber: data.cardNumber,
+        cardHolderName: data.cardholderName,
+        merchantId: "merchant-123", // Example value
+        transactionType: "purchase", // Example value
+        location: "Chennai", // Example value
+        userId: "user-123", // Example value
+        transactionId: "txn-123", // Example value
+        merchantName: "Sample Merchant", // Example value
+        merchantCategory: "Retail", // Example value
+      });
+  
+      if (fraudResult.prediction === 1) {
+        throw new Error(`Transaction flagged as fraud. Probability: ${fraudResult.probability}`);
+      }
+  
       // Simulate successful transaction
       setIsComplete(true);
       toast({
@@ -73,16 +89,14 @@ const CheckoutForm = ({ subtotal, shipping, tax, total }: CheckoutFormProps) => 
         description: "Your order has been placed successfully!",
         duration: 5000,
       });
-      
-      // Redirect to success page after a short delay
+  
       setTimeout(() => {
         navigate("/order-success");
       }, 2000);
-      
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Payment Failed",
-        description: "There was an issue processing your payment. Please try again.",
+        description: error.message || "There was an issue processing your payment.",
         variant: "destructive",
         duration: 5000,
       });

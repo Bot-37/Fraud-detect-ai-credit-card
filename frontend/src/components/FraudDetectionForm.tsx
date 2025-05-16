@@ -5,17 +5,17 @@ const fraudDetectionService = new FraudDetectionService();
 
 const FraudDetectionForm: React.FC = () => {
   const [formData, setFormData] = useState<TransactionData>({
-    cardNumber: "",             // Matches `TransactionData` interface
-    cardHolderName: "",         // Matches `TransactionData` interface
-    amount: 0,                  // Matches `TransactionData` interface
-    transactionDate: "",        // Matches `TransactionData` interface
-    transactionType: "",        // Matches `TransactionData` interface
-    merchantId: "",             // Matches `TransactionData` interface
-    location: "",               // Add this field if required
-    userId: "",                 // Add this field if required
-    transactionId: "",          // Add this field if required
-    merchantCategory: "",       // Matches `TransactionData` interface
-    merchantName: "",          // Matches `TransactionData` interface 
+    cardNumber: "",
+    cardHolderName: "",
+    amount: 0,
+    transactionDate: "",
+    transactionType: "",
+    merchantId: "",
+    location: "",
+    userId: "",
+    transactionId: "",
+    merchantCategory: "",
+    merchantName: "",
   });
 
   const [result, setResult] = useState<FraudCheckResult | null>(null);
@@ -26,7 +26,7 @@ const FraudDetectionForm: React.FC = () => {
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: name === "amount" ? Number(value) : value,  // parse amount to number
+      [name]: name === "amount" ? Number(value) : value, // Parse `amount` as number
     }));
   };
 
@@ -39,14 +39,17 @@ const FraudDetectionForm: React.FC = () => {
       ...formData,
       transactionDate: new Date(formData.transactionDate).toISOString(), // Convert to ISO string
     };
-  
-    // Optional: Validate required fields here before submission
 
     try {
-      const predictionResult = await fraudDetectionService.checkTransaction(formData);
+      const predictionResult = await fraudDetectionService.checkTransaction(formattedData);
       setResult(predictionResult);
     } catch (err: any) {
-      setError(err.message || "Unknown error");
+      // Handle JSON parsing errors or backend errors
+      if (err.message.includes("Unexpected end of JSON input")) {
+        setError("The server returned an empty or invalid response.");
+      } else {
+        setError(err.message || "Unknown error occurred.");
+      }
     }
   };
 
@@ -167,13 +170,10 @@ const FraudDetectionForm: React.FC = () => {
         <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
           <h3 className="text-lg font-bold text-green-700">Fraud Detection Result</h3>
           <p className="text-green-700">
-            <strong>Fraudulent:</strong> {result.isFraudulent ? "Yes" : "No"}
+            <strong>Prediction:</strong> {result.prediction === 1 ? "Fraudulent" : "Safe"}
           </p>
           <p className="text-green-700">
-            <strong>Risk Score:</strong> {result.score}
-          </p>
-          <p className="text-green-700">
-            <strong>Reason:</strong> {result.reason || "No specific reason provided"}
+            <strong>Probability:</strong> {result.probability}
           </p>
         </div>
       )}
