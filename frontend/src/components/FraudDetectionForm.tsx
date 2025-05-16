@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import { TransactionData, FraudCheckResult, FraudDetectionService } from "../serivces/fraudDetectionService";
+import { TransactionData, FraudCheckResult, FraudDetectionService } from "../services/fraudDetectionService";
 
 const fraudDetectionService = new FraudDetectionService();
 
 const FraudDetectionForm: React.FC = () => {
   const [formData, setFormData] = useState<TransactionData>({
-    cardNumber: "",
-    cardHolderName: "",
-    amount: 0,
-    transactionDate: "",
-    transactionType: "",
-    merchantName: "",
-    merchantCategory: "",
+    cardNumber: "",             // Matches `TransactionData` interface
+    cardHolderName: "",         // Matches `TransactionData` interface
+    amount: 0,                  // Matches `TransactionData` interface
+    transactionDate: "",        // Matches `TransactionData` interface
+    transactionType: "",        // Matches `TransactionData` interface
+    merchantId: "",             // Matches `TransactionData` interface
+    location: "",               // Add this field if required
+    userId: "",                 // Add this field if required
+    transactionId: "",          // Add this field if required
+    merchantCategory: "",       // Matches `TransactionData` interface
+    merchantName: "",          // Matches `TransactionData` interface 
   });
 
   const [result, setResult] = useState<FraudCheckResult | null>(null);
@@ -19,7 +23,11 @@ const FraudDetectionForm: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: name === "amount" ? Number(value) : value,  // parse amount to number
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,11 +35,18 @@ const FraudDetectionForm: React.FC = () => {
     setError(null);
     setResult(null);
 
+    const formattedData = {
+      ...formData,
+      transactionDate: new Date(formData.transactionDate).toISOString(), // Convert to ISO string
+    };
+  
+    // Optional: Validate required fields here before submission
+
     try {
       const predictionResult = await fraudDetectionService.checkTransaction(formData);
       setResult(predictionResult);
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Unknown error");
     }
   };
 
@@ -50,6 +65,7 @@ const FraudDetectionForm: React.FC = () => {
             required
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700">Card Holder Name</label>
           <input
@@ -61,6 +77,7 @@ const FraudDetectionForm: React.FC = () => {
             required
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700">Transaction Amount</label>
           <input
@@ -69,9 +86,11 @@ const FraudDetectionForm: React.FC = () => {
             value={formData.amount}
             onChange={handleChange}
             className="mt-1 block w-full border-gray-300 rounded-md"
+            min={0}
             required
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700">Transaction Date</label>
           <input
@@ -83,6 +102,7 @@ const FraudDetectionForm: React.FC = () => {
             required
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700">Transaction Type</label>
           <select
@@ -98,6 +118,19 @@ const FraudDetectionForm: React.FC = () => {
             <option value="withdrawal">Withdrawal</option>
           </select>
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Merchant ID</label>
+          <input
+            type="text"
+            name="merchantId"
+            value={formData.merchantId}
+            onChange={handleChange}
+            className="mt-1 block w-full border-gray-300 rounded-md"
+            required
+          />
+        </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700">Merchant Name</label>
           <input
@@ -109,6 +142,7 @@ const FraudDetectionForm: React.FC = () => {
             required
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700">Merchant Category</label>
           <input
@@ -120,6 +154,7 @@ const FraudDetectionForm: React.FC = () => {
             required
           />
         </div>
+
         <button
           type="submit"
           className="w-full bg-brand-DEFAULT text-white py-2 px-4 rounded-md hover:bg-brand-dark"

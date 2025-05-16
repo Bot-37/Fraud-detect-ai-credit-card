@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import List
-from app.config import Config
-from app.utils.logger import get_logger
+from backend.app.config import Config
+from backend.app.utils.logger import get_logger
 
 logger = get_logger("Validator")
 

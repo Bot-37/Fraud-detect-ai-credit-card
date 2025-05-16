@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
-from app.config import Config
-from app.utils.logger import get_logger
-from app.utils.validator import validate_dataframe
+from backend.app.config import Config
+from backend.app.utils.logger import get_logger
+from backend.app.utils.validator import validate_dataframe
 
 logger = get_logger("Preprocessing")
 

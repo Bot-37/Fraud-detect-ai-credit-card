@@ -1,6 +1,7 @@
 # Import Config and Logger Setup
-from app.config import Config
-from app.utils import get_logger
+from backend.app.config import Config
+from backend.app.utils.logger import get_logger
+
 
 # Global logger setup
 logger = get_logger(__name__)

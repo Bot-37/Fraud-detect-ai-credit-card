@@ -6,10 +6,10 @@ import numpy as np
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
-from app.utils.logger import get_logger
-from app.utils.preprocessing import preprocess_data
-from app.utils.validator import validate_dataframe
-from app.config import Config
+from backend.app.utils.logger import get_logger
+from backend.app.utils.preprocessing import preprocess_data
+from backend.app.utils.validator import validate_dataframe
+from backend.app.config import Config
 
 # Global model cache to prevent repeated loading
 _model = None

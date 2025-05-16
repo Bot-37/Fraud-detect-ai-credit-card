@@ -1,12 +1,11 @@
-#server.py
-
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
-from app.model.fraud_detector import predict_fraud
-from app.utils.logger import get_logger
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from backend.app.model.fraud_detector import predict_fraud
+from fastapi import FastAPI, HTTPException, APIRouter
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel  
+from backend.app.utils.logger import get_logger
 
 # === Initialize FastAPI ===
 app = FastAPI(title="Credit Card Fraud Detection API", version="1.0.0")
@@ -25,15 +24,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# === Path to React static build ===
-react_build_dir = os.path.join("app", "static", "dist")
-
-# === Mount React build directory at root "/" to serve index.html and assets correctly ===
-if os.path.exists(react_build_dir):
-    app.mount("/", StaticFiles(directory=react_build_dir, html=True), name="react")
-else:
-    print("[WARNING] React static files not found, skipping mount.")
-
 # === Logger ===
 logger = get_logger(__name__)
 
@@ -48,8 +38,10 @@ class Transaction(BaseModel):
     user_id: str = None
     transaction_id: str = None
 
-# === Prediction API ===
-@app.post("/predict")
+# === API Router with prefix /api ===
+api_router = APIRouter(prefix="/api")
+
+@api_router.post("/predict")
 async def predict_transaction(transaction: Transaction):
     try:
         logger.info(f"[INPUT] Transaction received: {transaction.dict()}")
@@ -75,7 +67,6 @@ async def predict_transaction(transaction: Transaction):
 
         logger.info(f"[OUTPUT] Prediction: {fraud_prediction}, Probability: {fraud_probability}")
 
-        # If fraud detected, block the transaction with an HTTPException (status 403 Forbidden)
         if fraud_prediction == 1:
             logger.warning(f"Transaction {model_input['transaction_id']} blocked: Fraud detected")
             raise HTTPException(
@@ -83,7 +74,6 @@ async def predict_transaction(transaction: Transaction):
                 detail=f"Transaction blocked: Fraudulent transaction detected with probability {fraud_probability}"
             )
 
-        # If no fraud, allow transaction to proceed
         return {
             "status": "approved",
             "data": {
@@ -101,8 +91,9 @@ async def predict_transaction(transaction: Transaction):
         logger.error(f"[ERROR] Unexpected Exception: {str(err)}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-
-# === Health Check ===
-@app.get("/health")
+@api_router.get("/health")
 def health_check():
     return {"status": "OK", "message": "Fraud Detection API is Live"}
+
+# === Include the router in the app ===
+app.include_router(api_router)

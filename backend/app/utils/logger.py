@@ -1,7 +1,7 @@
 import os
 import logging
 from logging.handlers import RotatingFileHandler
-from app.config import Config
+from backend.app.config import Config
 
 
 def get_logger(name: str) -> logging.Logger:
