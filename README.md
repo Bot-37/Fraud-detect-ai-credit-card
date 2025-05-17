@@ -93,12 +93,14 @@ fraud-detect-ai-credit-card/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/fraud-detect-ai.git
-cd fraud-detect-ai/backend
+git clone https://github.com/Bot-37/Fraud-detect-ai-credit-card.git
+cd Fraud-detect-ai-credit-card/backend
 
 # Create and activate virtual environment
 python -m venv venv
-source venv/bin/activate     # Windows: venv\Scripts\activate
+source venv/bin/activate
+
+# Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -126,7 +128,6 @@ Access the application at: http://localhost:3000
 
 - **creditcard.csv** – Real anonymized dataset from European card transactions
 - **fake_credit_card_dataset.json** – Synthetic test data for development
-- **stolen_cards.json** – Simulated database for flagged cards
 
 ## 🧠 Model Training (Optional)
 
