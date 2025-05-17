@@ -8,6 +8,35 @@ An end-to-end AI-powered solution for detecting credit card frauds in real-time 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI/CD Status](https://img.shields.io/github/workflow/status/yourusername/fraud-detect-ai/CI?logo=github)](https://github.com/Bot-37/Fraud-detect-ai-credit-card/actions)
 
+## 📑 Table of Contents
+
+1. [📘 Synopsis](#-synopsis)  
+2. [🔒 Key Features](#-key-features)  
+3. [🧰 Tech Stack](#-tech-stack)  
+4. [📁 Project Structure](#-project-structure)  
+5. [🚀 Getting Started](#-getting-started)  
+   - [🐍 Backend Setup (Python + Flask)](#-backend-setup-python--flask)  
+   - [⚛️ Frontend Setup (React)](#️-frontend-setup-react)  
+6. [📂 Datasets](#-datasets)  
+7. [🧠 Model Training (Optional)](#-model-training-optional)  
+8. [🔐 API Endpoints](#-api-endpoints)  
+9. [📈 Performance Metrics](#-performance-metrics)  
+10. [🛡️ Security Guidelines for Deployment](#️-security-guidelines-for-deployment)  
+11. [👨‍💻 Contributing](#-contributing)  
+12. [📜 License](#-license)  
+13. [📱 Live Demo Deployment](#-live-demo-deployment)  
+    - [🚀 Heroku Deployment](#heroku-deployment)  
+    - [🐳 Docker Deployment](#docker-deployment)  
+14. [👨‍💻 Developed by](#-developed-by)
+
+## 📘 Synopsis
+
+The **Credit Card Fraud Detection System** is a full-stack, AI-powered web application designed to identify and prevent fraudulent credit card transactions in real-time. Leveraging machine learning models trained on real-world datasets, the platform offers both end-users and administrators intuitive tools to detect, report, and analyze suspicious activity.
+
+Built with **Python (Flask)** on the backend and **React** on the frontend, the system uses a trained ML model to predict fraud, serves RESTful APIs for seamless integration, and presents real-time insights through a responsive web UI. The application also includes security-focused features such as stolen card flagging, behavioral analysis, and a live analytics dashboard.
+
+Whether you're demonstrating fraud detection for a portfolio, testing models, or looking to extend it into production-grade infrastructure, this project provides a solid, extensible foundation.
+
 ## 🔒 Key Features
 
 - 🛡️ **Real-time Fraud Prediction** – Predicts the likelihood of fraudulent transactions instantly
