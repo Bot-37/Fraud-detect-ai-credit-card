@@ -17,7 +17,7 @@ const CheckoutPage = () => {
   }, [items, navigate]);
 
   if (items.length === 0) {
-    return null; // Render nothing while redirecting
+    return null;
   }
 
   return (
