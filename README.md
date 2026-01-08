@@ -5,7 +5,6 @@
 An end-to-end AI-powered solution for detecting credit card frauds in real-time with an intuitive web interface. Powered by Machine Learning, Flask, and React.
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI/CD Status](https://img.shields.io/github/workflow/status/yourusername/fraud-detect-ai/CI?logo=github)](https://github.com/Bot-37/Fraud-detect-ai-credit-card/actions)
 
 ## 📑 Table of Contents
